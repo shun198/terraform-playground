@@ -19,3 +19,9 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
+# ------------------------------
+# Current AWS Region(ap-northeast-1)
+# ------------------------------
+# 現在のAWS Regionの取得方法
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region
+data "aws_region" "current" {}

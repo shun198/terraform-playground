@@ -36,9 +36,9 @@ locals {
   prefix = "${var.prefix}-${terraform.workspace}"
   common_tags = {
     Environmnet = terraform.workspace
-    Project = var.project
-    Owner = var.owner
-    ManagedBy = "Terraform"
+    Project     = var.project
+    Owner       = var.owner
+    ManagedBy   = "Terraform"
   }
 }
 

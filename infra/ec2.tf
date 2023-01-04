@@ -9,6 +9,6 @@ resource "aws_instance" "app_server" {
   tags = merge(
     # common_tagとnameを合体させてつける
     local.common_tags,
-    map("Name","${local.prefix}-ExampleAppServerInstance")
+    map("Name", "${local.prefix}-ExampleAppServerInstance")
   )
 }

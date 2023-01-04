@@ -3,10 +3,11 @@
 # ------------------------------
 terraform {
   # tfstateファイルを管理するようbackend(s3)を設定
+  # https://developer.hashicorp.com/terraform/language/settings/backends/configuration
   backend "s3" {
-    bucket = "terraform-playground-for-cicd"
-    key = "terrafrom-playground.tfstate"
-    region = "ap-northeast-1"
+    bucket  = "terraform-playground-for-cicd"
+    key     = "terrafrom-playground.tfstate"
+    region  = "ap-northeast-1"
     encrypt = true
   }
   required_providers {
@@ -24,6 +25,21 @@ terraform {
 # ------------------------------
 provider "aws" {
   region = "ap-northeast-1"
+}
+
+# ------------------------------
+# Locals
+# ------------------------------
+locals {
+  # var.prefixはvariables.tfから取得
+  # terraform.workspaceはterraform workspace listから該当するworkspace(dev,stg,prdなど)を取得
+  prefix = "${var.prefix}-${terraform.workspace}"
+  common_tags = {
+    Environmnet = terraform.workspace
+    Project = var.project
+    Owner = var.owner
+    ManagedBy = "Terraform"
+  }
 }
 
 # ------------------------------

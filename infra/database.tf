@@ -33,7 +33,7 @@ resource "aws_security_group" "rds" {
 
 resource "aws_db_instance" "main" {
   identifier        = "${local.prefix}-db"
-  db_name              = "tfplaygrounddb"
+  db_name           = "tfplaygrounddb"
   allocated_storage = 10
   storage_type      = "gp2"
   # https://qiita.com/uproad3/items/47494621290b4ffad39f

@@ -2,11 +2,11 @@
 # Database Configuration
 # ------------------------------
 # RDSが使用するプライベートサブネットを設定
-resource "aws_db_subnet_group" "name" {
+resource "aws_db_subnet_group" "main" {
   name = "${local.prefix}-main"
   subnet_ids = [
     aws_subnet.private_a.id,
-    aws_subnetq.private_c.id
+    aws_subnet.private_c.id
   ]
 
   tags = merge(
@@ -33,13 +33,13 @@ resource "aws_security_group" "rds" {
 
 resource "aws_db_instance" "main" {
   identifier        = "${local.prefix}-db"
-  name              = "tf-playground-db"
+  db_name              = "tfplaygrounddb"
   allocated_storage = 10
   storage_type      = "gp2"
   # https://qiita.com/uproad3/items/47494621290b4ffad39f
   engine               = "aurora-mysql"
-  engine_version       = "8.0.mysql_aurora.3.01."
-  instance_class       = "db.t2.micro"
+  engine_version       = "8.0.mysql_aurora.3.02.2"
+  instance_class       = "db.r5.large"
   db_subnet_group_name = aws_db_subnet_group.main.name
   username             = var.db_username
   password             = var.db_password

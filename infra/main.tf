@@ -5,11 +5,13 @@ terraform {
   # tfstateファイルを管理するようbackend(s3)を設定
   # https://developer.hashicorp.com/terraform/language/settings/backends/configuration
   backend "s3" {
-    bucket  = "terraform-playground-for-cicd"
-    key     = "terrafrom-playground.tfstate"
-    region  = "ap-northeast-1"
-    encrypt = true
+    bucket         = "terraform-playground-for-cicd"
+    key            = "terrafrom-playground.tfstate"
+    region         = "ap-northeast-1"
+    encrypt        = true
+    dynamodb_table = "terraform-playground-tf-state-lock"
   }
+  # プロバイダを設定
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -17,12 +19,14 @@ terraform {
     }
   }
 
+  # Terraformのバージョン制約
   required_version = ">= 1.2.0"
 }
 
 # ------------------------------
 # Provider
 # ------------------------------
+# プロバイダ(AWS)を指定
 provider "aws" {
   region = "ap-northeast-1"
 }
@@ -46,5 +50,4 @@ locals {
 # Current AWS Region(ap-northeast-1)
 # ------------------------------
 # 現在のAWS Regionの取得方法
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region
 data "aws_region" "current" {}

@@ -70,6 +70,7 @@ resource "aws_route" "public_internet_access_a" {
 
 # NATゲートウェイ用のElasticIPをpublic_a内に作成
 resource "aws_eip" "public_a" {
+  # EIPはVPC内に存在する
   vpc = true
 
   tags = merge(
@@ -90,54 +91,54 @@ resource "aws_nat_gateway" "public_a" {
   )
 }
 
-resource "aws_subnet" "public_b" {
+resource "aws_subnet" "public_c" {
   cidr_block = "10.0.2.0/24"
   # サブネットに配置されたインスタンスにパブリックIPアドレスが付与される
   map_public_ip_on_launch = true
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "${data.aws_region.current.name}b"
+  availability_zone       = "${data.aws_region.current.name}c"
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-public-b" })
+    tomap({ "Name" = "${local.prefix}-public-c" })
   )
 }
-resource "aws_route_table" "public_b" {
+resource "aws_route_table" "public_c" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-public-b-rt" })
+    tomap({ "Name" = "${local.prefix}-public-c-rt" })
   )
 }
 
-resource "aws_route_table_association" "public_b" {
-  subnet_id      = aws_subnet.public_b.id
-  route_table_id = aws_route_table.public_b.id
+resource "aws_route_table_association" "public_c" {
+  subnet_id      = aws_subnet.public_c.id
+  route_table_id = aws_route_table.public_c.id
 }
 
-resource "aws_route" "public_internet_access_b" {
-  route_table_id         = aws_route_table.public_b.id
+resource "aws_route" "public_internet_access_c" {
+  route_table_id         = aws_route_table.public_c.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.main.id
 }
 
-resource "aws_eip" "public_b" {
+resource "aws_eip" "public_c" {
   vpc = true
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-public-b-eip" })
+    tomap({ "Name" = "${local.prefix}-public-c-eip" })
   )
 }
 
-resource "aws_nat_gateway" "public_b" {
-  allocation_id = aws_eip.public_b.id
-  subnet_id     = aws_subnet.public_b.id
+resource "aws_nat_gateway" "public_c" {
+  allocation_id = aws_eip.public_c.id
+  subnet_id     = aws_subnet.public_c.id
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-public-b-ngw" })
+    tomap({ "Name" = "${local.prefix}-public-c-ngw" })
   )
 }
 # ------------------------------
@@ -175,34 +176,34 @@ resource "aws_route" "private_a_internet_out" {
   destination_cidr_block = "0.0.0.0/24"
 }
 
-resource "aws_subnet" "private_b" {
+resource "aws_subnet" "private_c" {
   cidr_block        = "10.0.12.0/24"
   vpc_id            = aws_vpc.main.id
-  availability_zone = "${data.aws_region.current.name}b"
+  availability_zone = "${data.aws_region.current.name}c"
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-private-b" })
+    tomap({ "Name" = "${local.prefix}-private-c" })
   )
 }
 
-resource "aws_route_table" "private_b" {
+resource "aws_route_table" "private_c" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-private-b-rt" })
+    tomap({ "Name" = "${local.prefix}-private-c-rt" })
   )
 }
 
-resource "aws_route_table_association" "private_b" {
-  subnet_id      = aws_subnet.private_b.id
-  route_table_id = aws_route_table.private_b.id
+resource "aws_route_table_association" "private_c" {
+  subnet_id      = aws_subnet.private_c.id
+  route_table_id = aws_route_table.private_c.id
 }
 
-resource "aws_route" "private_b_internet_out" {
-  route_table_id = aws_route_table.private_b.id
+resource "aws_route" "private_c_internet_out" {
+  route_table_id = aws_route_table.private_c.id
   # インターネットへのアウトバウンドアクセスを可能にするためにNATの設定を行う
-  nat_gateway_id         = aws_nat_gateway.public_b.id
+  nat_gateway_id         = aws_nat_gateway.public_c.id
   destination_cidr_block = "0.0.0.0/24"
 }

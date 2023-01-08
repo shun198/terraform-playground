@@ -14,3 +14,11 @@ variable "project" {
 variable "owner" {
   default = "shun198"
 }
+
+variable "db_username" {
+  description = "Username for RDB MySQL Instance"
+}
+
+variable "db_password" {
+  description = "Password for RDB MySQL Instance"
+}

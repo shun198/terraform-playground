@@ -1,5 +1,5 @@
 # ------------------------------
-# EC2 Instance Configuratioh
+# EC2 Instance Configuration
 # ------------------------------
 resource "aws_instance" "app_server" {
   ami           = "ami-0bba69335379e17f8"

@@ -44,6 +44,7 @@ resource "aws_security_group" "lb" {
   name        = "${local.prefix}-lb"
   vpc_id      = aws_vpc.main.id
 
+# ロードバランザーにインバウンドで入る
   ingress = {
     protocol    = "tcp"
     from_port   = 80
@@ -51,6 +52,7 @@ resource "aws_security_group" "lb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+# ロードバランザーからアウトバウンドで出る
   egress = {
     protocol    = "tcp"
     from_port   = 8000

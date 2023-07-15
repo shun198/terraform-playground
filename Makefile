@@ -1,9 +1,4 @@
 RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
-IAM_USER = shun198
-DURATION = 12h
-
-vault:
-	aws-vault exec $(IAM_USER) --duration=$(DURATION)
 
 init:
 	$(RUN_TERRAFORM) init

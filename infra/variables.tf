@@ -3,6 +3,10 @@
 # ------------------------------
 
 # プロジェクトを識別する一意の識別子
+variable "aws-default-region" {
+  default = "ap-northeast-1"
+}
+
 variable "prefix" {
   default = "tf-pg"
 }
@@ -22,3 +26,8 @@ variable "db_username" {
 variable "db_password" {
   description = "Password for RDB MySQL Instance"
 }
+
+variable "ami_image_for_bastion" {
+  description = "amzn2-ami-kernel-5.10-hvm-2.0.*-x86_64-gp2"
+}
+

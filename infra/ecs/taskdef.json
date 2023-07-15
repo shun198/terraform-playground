@@ -5,12 +5,12 @@
     "essential": true,
     "memoryReservation": 256,
     "environment": [
-      { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
-      { "name": "DB_HOST", "value": "${db_host}" },
-      { "name": "DB_NAME", "value": "${db_name}" },
-      { "name": "DB_USER", "value": "${db_user}" },
-      { "name": "DB_PASS", "value": "${db_pass}" },
-      { "name": "ALLOWED_HOSTS", "value": "${allowed_hosts}" },
+      { "name": "SECRET_KEY", "value": "${SECRET_KEY}" },
+      { "name": "POSTGRES_HOST", "value": "${POSTGRES_HOST}" },
+      { "name": "POSTGRES_NAME", "value": "${POSTGRES_name}" },
+      { "name": "POSTGRES_USER", "value": "${POSTGRES_USER}" },
+      { "name": "POSTGRES_PASSWORD", "value": "${POSTGRES_PASSWORD}" },
+      { "name": "ALLOWED_HOSTS", "value": "${ALLOWED_HOSTS}" },
       {
         "name": "S3_STORAGE_BUCKET_NAME",
         "value": "${s3_storage_bucket_name}"
@@ -25,7 +25,7 @@
       "options": {
         "awslogs-group": "${log_group_name}",
         "awslogs-region": "${log_group_region}",
-        "awslogs-stream-prefix": "api"
+        "awslogs-stream-prefix": "app"
       }
     },
     "portMappings": [

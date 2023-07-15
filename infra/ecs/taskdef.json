@@ -7,18 +7,10 @@
     "environment": [
       { "name": "SECRET_KEY", "value": "${SECRET_KEY}" },
       { "name": "POSTGRES_HOST", "value": "${POSTGRES_HOST}" },
-      { "name": "POSTGRES_NAME", "value": "${POSTGRES_name}" },
+      { "name": "POSTGRES_NAME", "value": "${POSTGRES_NAME}" },
       { "name": "POSTGRES_USER", "value": "${POSTGRES_USER}" },
       { "name": "POSTGRES_PASSWORD", "value": "${POSTGRES_PASSWORD}" },
-      { "name": "ALLOWED_HOSTS", "value": "${ALLOWED_HOSTS}" },
-      {
-        "name": "S3_STORAGE_BUCKET_NAME",
-        "value": "${s3_storage_bucket_name}"
-      },
-      {
-        "name": "S3_STORAGE_BUCKET_REGION",
-        "value": "${s3_storage_bucket_region}"
-      }
+      { "name": "ALLOWED_HOSTS", "value": "${ALLOWED_HOSTS}" }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",

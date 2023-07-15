@@ -26,11 +26,11 @@ data "template_file" "app_container_definitions" {
   vars = {
     app_image                = var.ecr_image_app
     proxy_image              = var.ecr_image_proxy
-    django_secret_key        = var.django_secret_key
-    db_host                  = aws_db_instance.main.address
-    db_name                  = aws_db_instance.main.name
-    db_user                  = aws_db_instance.main.username
-    db_pass                  = aws_db_instance.main.password
+    secret_key               = var.secret_key
+    postgres_host            = aws_db_instance.main.address
+    postgres_name            = aws_db_instance.main.name
+    postgres_user            = aws_db_instance.main.username
+    postgres_pass            = aws_db_instance.main.password
     log_group_name           = aws_cloudwatch_log_group.ecs_task_logs.name
     log_group_region         = data.aws_region.current.name
     allowed_hosts            = aws_route53_record.app.fqdn

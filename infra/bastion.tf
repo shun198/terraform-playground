@@ -85,7 +85,7 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # DBにアクセスできるようにするため
+  # DBへアクセスできるようにするため
   egress {
     from_port = 5432
     to_port   = 5432

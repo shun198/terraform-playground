@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sudo yum update -y
+sudo yum install -y postgesql
 sudo amazon-linux-extras install -y docker
 sudo systemctl enable docker.service
 sudo systemctl start docker.service

@@ -30,3 +30,4 @@ override.tf.json
 # example: *tfplan*
 .op
 terraform-playground-key-pair.pem
+docs

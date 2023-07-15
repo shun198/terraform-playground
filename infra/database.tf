@@ -11,7 +11,7 @@ resource "aws_db_subnet_group" "main" {
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-main" })
+    tomap({ "Name" = "${local.prefix}-rds-subnet-group" })
   )
 }
 
@@ -58,6 +58,6 @@ resource "aws_db_instance" "main" {
 
   tags = merge(
     local.common_tags,
-    tomap({ "Name" = "${local.prefix}-main" })
+    tomap({ "Name" = "${local.prefix}-rds-instance" })
   )
 }

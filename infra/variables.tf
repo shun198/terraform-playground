@@ -31,3 +31,7 @@ variable "ami_image_for_bastion" {
   description = "amzn2-ami-kernel-5.10-hvm-2.0.*-x86_64-gp2"
 }
 
+variable "bastion_key_name" {
+  description = "terraform-playground-key-pair"
+}
+

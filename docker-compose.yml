@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: containers/postgres/Dockerfile
+    # M1チップでも動くように
+    platform: linux/x86_64
+    # ローカルの/data/dbをコンテナの/var/lib/postgresql/dataにマウンティング
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    # 環境変数
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_HOST
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: containers/django/Dockerfile
+    volumes:
+      - ./application:/code
+      - ./static:/static
+    ports:
+      - "8000:8000"
+      # デバッグ用ポート
+      - "8080:8080"
+    command: sh -c "/usr/local/bin/entrypoint.sh"
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+  mail:
+    container_name: mail
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_PROFILE
+volumes:
+  db_data:
+  static:

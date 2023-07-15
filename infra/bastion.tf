@@ -14,21 +14,12 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_instance" "bastion" {
-  ami                  = data.aws_ami.amazon_linux.id
-  instance_type        = "t2.micro"
-  user_data            = file("./templates/bastion/user-data.sh")
-  iam_instance_profile = aws_iam_instance_profile.bastion.name
-  key_name             = var.bastion_key_name
-  subnet_id            = aws_subnet.public_a.id
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public_a.id
 
-  vpc_security_group_ids = [
-    aws_security_group.bastion.id
-  ]
-
-  # タグ付け
-  # mergeを使うことで一部のmain.tfにあるcommon_tagsをoverrideできる
   tags = merge(
     local.common_tags,
-    map("Name", "${local.prefix}-bastion")
+    tomap({ "Name" = "${local.prefix}-bastion" })
   )
 }

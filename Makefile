@@ -7,6 +7,12 @@ vault:
 
 init:
 	$(RUN_TERRAFORM) init
+	$(RUN_TERRAFORM) workspace new prd
+	$(RUN_TERRAFORM) workspace new stg
+	$(RUN_TERRAFORM) workspace new dev
+
+workspace:
+	$(RUN_TERRAFORM) workspace list
 
 fmt:
 	$(RUN_TERRAFORM) fmt
@@ -16,6 +22,9 @@ validate:
 
 show:
 	$(RUN_TERRAFORM) show
+
+plan:
+	$(RUN_TERRAFORM) plan
 
 apply:
 	$(RUN_TERRAFORM) apply -auto-approve

@@ -135,3 +135,29 @@ resource "aws_ecs_service" "app" {
 
   #   depends_on = [aws_lb_listener.app_https]
 }
+
+# resource "aws_ecr_repository" "app" {
+#   name = "${local.path}/app"
+
+#   image_scanning_configuration {
+#     scan_on_push = true
+#   }
+
+#   tags = merge(
+#     local.common_tags,
+#     tomap({ "Name" = "${local.prefix}-ecr-app-repository" })
+#   )
+# }
+
+# resource "aws_ecr_repository" "web" {
+#   name = "${local.path}/web"
+
+#   image_scanning_configuration {
+#     scan_on_push = true
+#   }
+
+#   tags = merge(
+#     local.common_tags,
+#     tomap({ "Name" = "${local.prefix}-ecr-app-repository" })
+#   )
+# }

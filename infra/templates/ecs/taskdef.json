@@ -6,11 +6,11 @@
     "memoryReservation": 256,
     "environment": [
       { "name": "SECRET_KEY", "value": "test" },
-      { "name": "POSTGRES_HOST", "value": "postgres" },
-      { "name": "POSTGRES_NAME", "value": "postgres" },
+      { "name": "POSTGRES_HOST", "value": "${POSTGRES_HOST}" },
+      { "name": "POSTGRES_NAME", "value": "${POSTGRES_NAME}" },
       { "name": "POSTGRES_USER", "value": "postgres" },
       { "name": "POSTGRES_PASSWORD", "value": "postgres" },
-      { "name": "ALLOWED_HOSTS", "value": "127.0.0.1" }
+      { "name": "ALLOWED_HOSTS", "value": "*" }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",
@@ -45,16 +45,11 @@
       }
     ],
     "memoryReservation": 256,
-    "environment": [
-      { "name": "APP_HOST", "value": "127.0.0.1" },
-      { "name": "APP_PORT", "value": "8000" },
-      { "name": "LISTEN_PORT", "value": "80" }
-    ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${log_group_name}",
-        "awslogs-region": "${log_group_region}",
+        "awslogs-group": "${LOG_GROUP_NAME}",
+        "awslogs-region": "${LOG_GROUP_REGION}",
         "awslogs-stream-prefix": "proxy"
       }
     },

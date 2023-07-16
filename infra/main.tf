@@ -38,6 +38,7 @@ locals {
   # var.prefixはvariables.tfから取得
   # terraform.workspaceはterraform workspace listから該当するworkspace(dev,stg,prdなど)を取得
   prefix = "${var.prefix}-${terraform.workspace}"
+  path   = "${var.prefix}/${terraform.workspace}"
   common_tags = {
     Environmnet = terraform.workspace
     Project     = var.project

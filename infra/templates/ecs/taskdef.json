@@ -1,22 +1,22 @@
 [
   {
     "name": "app",
-    "image": "${app_image}",
+    "image": "${DJANGO_IMAGE}",
     "essential": true,
     "memoryReservation": 256,
     "environment": [
-      { "name": "SECRET_KEY", "value": "${SECRET_KEY}" },
-      { "name": "POSTGRES_HOST", "value": "${POSTGRES_HOST}" },
-      { "name": "POSTGRES_NAME", "value": "${POSTGRES_NAME}" },
-      { "name": "POSTGRES_USER", "value": "${POSTGRES_USER}" },
-      { "name": "POSTGRES_PASSWORD", "value": "${POSTGRES_PASSWORD}" },
-      { "name": "ALLOWED_HOSTS", "value": "${ALLOWED_HOSTS}" }
+      { "name": "SECRET_KEY", "value": "test" },
+      { "name": "POSTGRES_HOST", "value": "postgres" },
+      { "name": "POSTGRES_NAME", "value": "postgres" },
+      { "name": "POSTGRES_USER", "value": "postgres" },
+      { "name": "POSTGRES_PASSWORD", "value": "postgres" },
+      { "name": "ALLOWED_HOSTS", "value": "127.0.0.1" }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${log_group_name}",
-        "awslogs-region": "${log_group_region}",
+        "awslogs-group": "${LOG_GROUP_NAME}",
+        "awslogs-region": "${LOG_GROUP_REGION}",
         "awslogs-stream-prefix": "app"
       }
     },
@@ -36,7 +36,7 @@
   },
   {
     "name": "web",
-    "image": "${nginx_image}",
+    "image": "${NGINX_IMAGE}",
     "essential": true,
     "portMappings": [
       {

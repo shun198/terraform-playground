@@ -25,17 +25,17 @@ data "template_file" "app_container_definitions" {
   template = file("./templates/ecs/taskdef.json")
 
   vars = {
-    app_image        = var.ecr_image_app
-    nginx_image      = var.ecr_image_web
-    secret_key       = var.secret_key
-    postgres_host    = aws_db_instance.main.address
-    postgres_name    = aws_db_instance.main.db_name
-    postgres_user    = aws_db_instance.main.username
-    postgres_pass    = aws_db_instance.main.password
-    log_group_name   = aws_cloudwatch_log_group.ecs_task_logs.name
-    log_group_region = data.aws_region.current.name
+    DJANGO_IMAGE      = var.ecr_image_app
+    NGINX_IMAGE       = var.ecr_image_web
+    SECRET_KEY        = var.secret_key
+    POSTGRES_HOST     = aws_db_instance.main.address
+    POSTGRES_NAME     = aws_db_instance.main.db_name
+    POSTGRES_USER     = aws_db_instance.main.username
+    POSTGRES_PASSWORD = aws_db_instance.main.password
+    LOG_GROUP_NAME    = aws_cloudwatch_log_group.ecs_task_logs.name
+    LOG_GROUP_REGION  = data.aws_region.current.name
     #  今回は検証用のためALBを作成するまでは一時的に全てのホストを許可する
-    allowed_hosts = "*"
+    ALLOWED_HOSTS = "*"
     # allowed_hosts            = aws_route53_record.app.fqdn
     # s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
     # s3_storage_bucket_region = data.aws_region.current.name

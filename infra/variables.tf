@@ -43,6 +43,7 @@ variable "ecr_image_web" {
 
 variable "secret_key" {
   description = "Secret Key for Django"
+  default     = "test"
 }
 
 variable "dns_zone_name" {

@@ -33,12 +33,12 @@ variable "bastion_key_name" {
 
 variable "ecr_image_app" {
   description = "ECR Image URI for Django App"
-  default = ""
+  default     = ""
 }
 
 variable "ecr_image_web" {
   description = "ECR Image URI for Nginx"
-  default = ""
+  default     = ""
 }
 
 variable "secret_key" {
@@ -51,7 +51,7 @@ variable "dns_zone_name" {
 
 variable "subdomain" {
   description = "SubDomain Per Account"
-  type = map(string)
+  type        = map(string)
   default = {
     prd = "api"
     stg = "api.stg"

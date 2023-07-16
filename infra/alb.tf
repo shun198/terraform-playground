@@ -6,8 +6,8 @@ resource "aws_lb" "app" {
   name               = "${local.prefix}-main"
   load_balancer_type = "application"
   subnets = [
-    aws.subnet.public_a.id,
-    aws.subnet.public_c.id
+    aws_subnet.public_a.id,
+    aws_subnet.public_c.id
   ]
 
   security_groups = [aws_security_group.lb.id]
@@ -50,16 +50,16 @@ resource "aws_lb_listener" "app" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app.arn
   }
-# 後ほど記載
-#   default_action {
-#     type = "redirect"
+  # 後ほど記載
+  #   default_action {
+  #     type = "redirect"
 
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
+  #     redirect {
+  #       port        = "443"
+  #       protocol    = "HTTPS"
+  #       status_code = "HTTP_301"
+  #     }
+  #   }
 
 
   tags = merge(
@@ -74,7 +74,7 @@ resource "aws_lb_listener" "app_https" {
   port              = 443
   protocol          = "HTTPS"
   # listenerを作成する前にACMのバリデーションを行う
-  certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
+  # certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
 
   default_action {
     type             = "forward"
@@ -89,30 +89,50 @@ resource "aws_security_group" "lb" {
   vpc_id      = aws_vpc.main.id
 
   # Publicな通信からロードバランザーへインバウンドで入る
-  ingress = {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-# ACMの設定後追記
-#   ingress = {
-#     protocol    = "tcp"
-#     from_port   = 443
-#     to_port     = 443
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  #   ingress = {
+  #     protocol    = "tcp"
+  #     from_port   = 80
+  #     to_port     = 80
+  #     cidr_blocks = ["0.0.0.0/0"]
+  #   }
+  # ACMの設定後追記
+  #   ingress = {
+  #     protocol    = "tcp"
+  #     from_port   = 443
+  #     to_port     = 443
+  #     cidr_blocks = ["0.0.0.0/0"]
+  #   }
 
-  # ロードバランザーからECSへアウトバウンドで出る
-  egress = {
-    protocol    = "tcp"
-    from_port   = 8000
-    to_port     = 8000
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  #   # ロードバランザーからECSへアウトバウンドで出る
+  #   egress = {
+  #     protocol    = "tcp"
+  #     from_port   = 8000
+  #     to_port     = 8000
+  #     cidr_blocks = ["0.0.0.0/0"]
+  #   }
 
   tags = merge(
     local.common_tags,
     tomap({ "Name" = "${local.prefix}-alb-sg" })
   )
+}
+
+# Publicな通信からロードバランザーへインバウンドで入る
+resource "aws_security_group_rule" "lb_sg_rule_ingress" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.bastion.id
+}
+
+# ロードバランザーからECSへアウトバウンドで出る
+resource "aws_security_group_rule" "lb_sg_rule_egress" {
+  type              = "egress"
+  from_port         = 8000
+  to_port           = 8000
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.bastion.id
 }

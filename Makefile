@@ -2,9 +2,9 @@ RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
 
 init:
 	$(RUN_TERRAFORM) init
-	$(RUN_TERRAFORM) workspace new prd
-	$(RUN_TERRAFORM) workspace new stg
-	$(RUN_TERRAFORM) workspace new dev
+	-@ $(RUN_TERRAFORM) workspace new prd
+	-@ $(RUN_TERRAFORM) workspace new stg
+	-@ $(RUN_TERRAFORM) workspace new dev
 
 workspace:
 	$(RUN_TERRAFORM) workspace list

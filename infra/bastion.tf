@@ -17,7 +17,7 @@ data "aws_ami" "amazon_linux" {
 # resource "aws_iam_role" "bastion" {
 #   name = "${local.prefix}-bastion"
 #   # sts:AssumeRole(別のIAMロールへの切り替えを許可)を割り当てる
-#   assume_role_policy = file("./bastion/instance-profile-policy.json")
+#   assume_role_policy = file("./templates/bastion/instance-profile-policy.json")
 
 #   tags = merge(
 #     local.common_tags,
@@ -42,7 +42,7 @@ data "aws_ami" "amazon_linux" {
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
-  user_data     = file("./bastion/user-data.sh")
+  user_data     = file("./templates/bastion/user-data.sh")
   # iam_instance_profile = aws_iam_instance_profile.bastion.name
   key_name  = var.bastion_key_name
   subnet_id = aws_subnet.public_a.id
@@ -102,3 +102,11 @@ resource "aws_security_group" "bastion" {
   )
 }
 
+# resource "aws_security_group_rule" "ingress_ssh" {
+#   type              = "ingress"
+#   from_port         = 0
+#   to_port           = "ssh"
+#   protocol          = "tcp"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   security_group_id = aws_security_group.bastion.id
+# }

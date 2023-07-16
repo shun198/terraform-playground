@@ -102,11 +102,3 @@ resource "aws_security_group" "bastion" {
   )
 }
 
-# resource "aws_security_group_rule" "ingress_ssh" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = "ssh"
-#   protocol          = "tcp"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.bastion.id
-# }

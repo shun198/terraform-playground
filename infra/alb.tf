@@ -69,18 +69,18 @@ resource "aws_lb_listener" "app" {
 }
 
 # HTTPS用のリスナー(validationから取得)
-resource "aws_lb_listener" "app_https" {
-  load_balancer_arn = aws_lb.app.arn
-  port              = 443
-  protocol          = "HTTPS"
-  # listenerを作成する前にACMのバリデーションを行う
-  # certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
+# resource "aws_lb_listener" "app_https" {
+#   load_balancer_arn = aws_lb.app.arn
+#   port              = 443
+#   protocol          = "HTTPS"
+#   # listenerを作成する前にACMのバリデーションを行う
+#   # certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
-  }
-}
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.app.arn
+#   }
+# }
 
 
 resource "aws_security_group" "lb" {

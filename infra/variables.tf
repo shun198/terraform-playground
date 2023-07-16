@@ -44,3 +44,17 @@ variable "ecr_image_web" {
 variable "secret_key" {
   description = "Secret Key for Django"
 }
+
+variable "dns_zone_name" {
+  description = "Domain Name"
+}
+
+variable "subdomain" {
+  description = "SubDomain Per Account"
+  type = map(string)
+  default = {
+    prd = "api"
+    stg = "api.stg"
+    dev = "api.dev"
+  }
+}

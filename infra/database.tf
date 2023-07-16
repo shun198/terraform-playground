@@ -25,7 +25,10 @@ resource "aws_security_group" "rds" {
     from_port = 5432
     to_port   = 5432
     security_groups = [
+      # 踏み台サーバからRDSへのアクセスを許可する
       aws_security_group.bastion.id,
+      # ECSからRDSへのアクセスを許可する
+      aws_security_group.ecs_service.id,
     ]
 
   }

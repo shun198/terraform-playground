@@ -20,25 +20,29 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
   )
 }
 
+# ECSのコンテナの設定
 data "template_file" "app_container_definitions" {
   template = file("./ecs/taskdef.json")
 
   vars = {
     app_image                = var.ecr_image_app
-    proxy_image              = var.ecr_image_proxy
+    nginx_image              = var.ecr_image_web
     secret_key               = var.secret_key
     postgres_host            = aws_db_instance.main.address
-    postgres_name            = aws_db_instance.main.name
+    postgres_name            = aws_db_instance.main.db_name
     postgres_user            = aws_db_instance.main.username
     postgres_pass            = aws_db_instance.main.password
     log_group_name           = aws_cloudwatch_log_group.ecs_task_logs.name
     log_group_region         = data.aws_region.current.name
-    allowed_hosts            = aws_route53_record.app.fqdn
-    s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
-    s3_storage_bucket_region = data.aws_region.current.name
+    #  今回は検証用のためALBを作成するまでは一時的に全てのホストを許可する
+    allowed_hosts = "*"
+    # allowed_hosts            = aws_route53_record.app.fqdn
+    # s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
+    # s3_storage_bucket_region = data.aws_region.current.name
   }
 }
 
+# タスク定義
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition.html#example-usage
 resource "aws_ecs_task_definition" "app" {
   family                   = "${local.prefix}-app"
@@ -52,14 +56,19 @@ resource "aws_ecs_task_definition" "app" {
     name = "static"
   }
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-ecs-task-def" })
+  )
 }
 
+# ECSのセキュリテーグループ
 resource "aws_security_group" "ecs_service" {
   description = "Access for the ECS Service"
   name        = "${local.prefix}-ecs-service"
   vpc_id      = aws_vpc.main.id
 
+ # ECSからPublicな通信へのアウトバウンドアクセスを許可
   egress {
     from_port   = 443
     to_port     = 443
@@ -67,6 +76,7 @@ resource "aws_security_group" "ecs_service" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+ # ECSからPostgresへのアウトバウンドアクセスを許可
   egress {
     from_port = 5432
     to_port   = 5432
@@ -77,39 +87,51 @@ resource "aws_security_group" "ecs_service" {
     ]
   }
 
+  # Publicな通信からNginxへのインバウンドアクセスを許可
+  # 全ての通信をNginxを経由させたいのでECSの8000ポートへ直接アクセスさせない
   ingress {
-    from_port = 8000
-    to_port   = 8000
+    from_port = 80
+    to_port   = 80
     protocol  = "tcp"
-    security_groups = [
-      aws_security_group.lb.id
-    ]
+    # security_groups = [
+    #   aws_security_group.lb.id
+    # ]
   }
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-ecs-sg" })
+  )
 }
 
 resource "aws_ecs_service" "app" {
   name             = "${local.prefix}-app"
   cluster          = aws_ecs_cluster.main.name
   task_definition  = aws_ecs_task_definition.app.family
+  # 今回は検証用のためタスクを1つだけ実行させる
   desired_count    = 1
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
   network_configuration {
     subnets = [
-      aws_subnet.private_a.id,
-      aws_subnet.private_c.id,
+      aws_subnet.public_a.id,
+      aws_subnet.public_c.id,
     ]
     security_groups = [aws_security_group.ecs_service.id]
+    assign_public_ip = true
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
-    container_name   = "proxy"
-    container_port   = 8000
-  }
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-ecs-service" })
+  )
 
-  depends_on = [aws_lb_listener.app_https]
+#   load_balancer {
+#     target_group_arn = aws_lb_target_group.app.arn
+#     container_name   = "proxy"
+#     container_port   = 8000
+#   }
+
+#   depends_on = [aws_lb_listener.app_https]
 }

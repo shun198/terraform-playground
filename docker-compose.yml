@@ -25,6 +25,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
   app:
     container_name: app
     build:
@@ -45,12 +46,26 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  nginx:
+    container_name: web
+    build:
+      context: containers/nginx/
+      dockerfile: Dockerfile
+    volumes:
+      - ./static:/static
+    ports:
+      - 80:80
+    depends_on:
+      - app
+
   mail:
     container_name: mail
     image: schickling/mailcatcher
     ports:
       - "1080:1080"
       - "1025:1025"
+
   localstack:
     image: localstack/localstack
     container_name: localstack
@@ -60,6 +75,7 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_PROFILE
+
 volumes:
   db_data:
   static:

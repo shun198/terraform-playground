@@ -31,3 +31,16 @@ variable "bastion_key_name" {
   default = "terraform-playground-key-pair"
 }
 
+variable "ecr_image_app" {
+  description = "ECR Image URI for Django App"
+  default = ""
+}
+
+variable "ecr_image_web" {
+  description = "ECR Image URI for Nginx"
+  default = ""
+}
+
+variable "secret_key" {
+  description = "Secret Key for Django"
+}

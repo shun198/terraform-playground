@@ -3,7 +3,7 @@
 # https://www.postgresql.org/download/linux/ubuntu/
 sudo yum update -y
 sudo yum install -y postgresql-client-12
-sudo amazon-linux-extras install -y docker
+{% comment %} sudo amazon-linux-extras install -y docker
 sudo systemctl enable docker.service
 sudo systemctl start docker.service
-sudo usermod -aG docker ec2-user
+sudo usermod -aG docker ec2-user {% endcomment %}

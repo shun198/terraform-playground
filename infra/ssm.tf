@@ -11,5 +11,6 @@ resource "aws_ssm_parameter" "SECRET_KEY" {
 }
 
 output "SECRET_KEY_VALUE" {
-  value = aws_ssm_parameter.SECRET_KEY.value
+  value     = aws_ssm_parameter.SECRET_KEY.value
+  sensitive = true
 }

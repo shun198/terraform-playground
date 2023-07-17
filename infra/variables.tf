@@ -24,7 +24,6 @@ variable "db_password" {
 }
 
 variable "ami_image_for_bastion" {
-  # default = "amzn2-ami-kernel-5.10-hvm-2.0.*-x86_64-gp2"
   default = "al2023-ami-2023.1.*-kernel-6.*-x86_64"
 }
 

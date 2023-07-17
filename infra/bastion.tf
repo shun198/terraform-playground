@@ -31,8 +31,8 @@ data "aws_ami" "amazon_linux" {
 #   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 # }
 
-# EC2を作成する画面にIAMロールをアタッチする箇所がなく、
-# IAMインスタンスプロファイルを設定する箇所が存在するため
+# # EC2を作成する画面にIAMロールをアタッチする箇所がなく、
+# # IAMインスタンスプロファイルを設定する箇所が存在するため
 # aws_iam_instance_profileを使ってIAMロールをEC2インスタンスにアタッチする
 # resource "aws_iam_instance_profile" "bastion" {
 #   name = "${local.prefix}-bastion-instance-profile"

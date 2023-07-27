@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   db:
@@ -18,7 +18,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - "5432:5432"
+      - '5432:5432'
     healthcheck:
       test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
       interval: 10s
@@ -35,9 +35,9 @@ services:
       - ./application:/code
       - ./static:/static
     ports:
-      - "8000:8000"
+      - '8000:8000'
       # デバッグ用ポート
-      - "8080:8080"
+      - '8080:8080'
     command: sh -c "/usr/local/bin/entrypoint.sh"
     stdin_open: true
     tty: true
@@ -63,14 +63,14 @@ services:
     container_name: mail
     image: schickling/mailcatcher
     ports:
-      - "1080:1080"
-      - "1025:1025"
+      - '1080:1080'
+      - '1025:1025'
 
   localstack:
     image: localstack/localstack
     container_name: localstack
     ports:
-      - "4566:4566"
+      - '4566:4566'
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
@@ -79,3 +79,7 @@ services:
 volumes:
   db_data:
   static:
+
+networks:
+  default:
+    name: testnet

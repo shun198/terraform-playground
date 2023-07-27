@@ -20,47 +20,47 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
   )
 }
 
-# ECSのコンテナの設定
-data "template_file" "app_container_definitions" {
-  template = file("./templates/ecs/taskdef.json")
+# # ECSのコンテナの設定
+# data "template_file" "app_container_definitions" {
+#   template = file("./templates/ecs/taskdef.json")
 
-  vars = {
-    DJANGO_IMAGE      = var.ecr_image_app
-    NGINX_IMAGE       = var.ecr_image_web
-    SECRET_KEY        = var.secret_key
-    POSTGRES_HOST     = aws_db_instance.main.address
-    POSTGRES_NAME     = aws_db_instance.main.db_name
-    POSTGRES_USER     = aws_db_instance.main.username
-    POSTGRES_PASSWORD = aws_db_instance.main.password
-    LOG_GROUP_NAME    = aws_cloudwatch_log_group.ecs_task_logs.name
-    LOG_GROUP_REGION  = data.aws_region.current.name
-    #  今回は検証用のためALBを作成するまでは一時的に全てのホストを許可する
-    ALLOWED_HOSTS = "*"
-    # allowed_hosts            = aws_route53_record.app.fqdn
-    # s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
-    # s3_storage_bucket_region = data.aws_region.current.name
-  }
-}
+#   vars = {
+#     DJANGO_IMAGE      = var.ecr_image_app
+#     NGINX_IMAGE       = var.ecr_image_web
+#     SECRET_KEY        = var.secret_key
+#     POSTGRES_HOST     = aws_db_instance.main.address
+#     POSTGRES_NAME     = aws_db_instance.main.db_name
+#     POSTGRES_USER     = aws_db_instance.main.username
+#     POSTGRES_PASSWORD = aws_db_instance.main.password
+#     LOG_GROUP_NAME    = aws_cloudwatch_log_group.ecs_task_logs.name
+#     LOG_GROUP_REGION  = data.aws_region.current.name
+#     #  今回は検証用のためALBを作成するまでは一時的に全てのホストを許可する
+#     ALLOWED_HOSTS = "*"
+#     # allowed_hosts            = aws_route53_record.app.fqdn
+#     # s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
+#     # s3_storage_bucket_region = data.aws_region.current.name
+#   }
+# }
 
 # タスク定義
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition.html#example-usage
-resource "aws_ecs_task_definition" "app" {
-  family                   = "${local.prefix}-app"
-  container_definitions    = data.template_file.app_container_definitions.rendered
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 256
-  memory                   = 512
+# resource "aws_ecs_task_definition" "app" {
+#   family                   = "${local.prefix}-app"
+#   container_definitions    = data.template_file.app_container_definitions.rendered
+#   requires_compatibilities = ["FARGATE"]
+#   network_mode             = "awsvpc"
+#   cpu                      = 256
+#   memory                   = 512
 
-  volume {
-    name = "static"
-  }
+#   volume {
+#     name = "static"
+#   }
 
-  tags = merge(
-    local.common_tags,
-    tomap({ "Name" = "${local.prefix}-ecs-task-def" })
-  )
-}
+#   tags = merge(
+#     local.common_tags,
+#     tomap({ "Name" = "${local.prefix}-ecs-task-def" })
+#   )
+# }
 
 # ECSのセキュリテーグループ
 resource "aws_security_group" "ecs_service" {
@@ -104,37 +104,37 @@ resource "aws_security_group" "ecs_service" {
   )
 }
 
-resource "aws_ecs_service" "app" {
-  name            = "${local.prefix}-app"
-  cluster         = aws_ecs_cluster.main.name
-  task_definition = aws_ecs_task_definition.app.family
-  # 今回は検証用のためタスクを1つだけ実行させる
-  desired_count    = 1
-  launch_type      = "FARGATE"
-  platform_version = "1.4.0"
+# resource "aws_ecs_service" "app" {
+#   name            = "${local.prefix}-app"
+#   cluster         = aws_ecs_cluster.main.name
+#   # task_definition = aws_ecs_task_definition.app.family
+#   # 今回は検証用のためタスクを1つだけ実行させる
+#   desired_count    = 1
+#   launch_type      = "FARGATE"
+#   platform_version = "1.4.0"
 
-  network_configuration {
-    subnets = [
-      aws_subnet.public_a.id,
-      aws_subnet.public_c.id,
-    ]
-    security_groups  = [aws_security_group.ecs_service.id]
-    assign_public_ip = true
-  }
+#   network_configuration {
+#     subnets = [
+#       aws_subnet.public_a.id,
+#       aws_subnet.public_c.id,
+#     ]
+#     security_groups  = [aws_security_group.ecs_service.id]
+#     assign_public_ip = true
+#   }
 
-  tags = merge(
-    local.common_tags,
-    tomap({ "Name" = "${local.prefix}-ecs-service" })
-  )
+#   tags = merge(
+#     local.common_tags,
+#     tomap({ "Name" = "${local.prefix}-ecs-service" })
+#   )
 
-  #   load_balancer {
-  #     target_group_arn = aws_lb_target_group.app.arn
-  #     container_name   = "proxy"
-  #     container_port   = 8000
-  #   }
+#   load_balancer {
+#     target_group_arn = aws_lb_target_group.app.arn
+#     container_name   = "proxy"
+#     container_port   = 8000
+#   }
 
-  #   depends_on = [aws_lb_listener.app_https]
-}
+#   depends_on = [aws_lb_listener.app_https]
+# }
 
 # resource "aws_ecr_repository" "app" {
 #   name = "${local.path}/app"

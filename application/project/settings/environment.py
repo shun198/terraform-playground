@@ -6,14 +6,13 @@ from pydantic import BaseSettings
 class DjangoSettings(BaseSettings):
     """Django関連の環境変数を設定するクラス"""
 
-    SECRET_KEY: str = "test"
+    SECRET_KEY: str = "django"
     ALLOWED_HOSTS: str = "localhost 127.0.0.1 [::1]"
-    POSTGRES_NAME: str = "postgres"
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_NAME: str = "django"
+    POSTGRES_USER: str = "django"
+    POSTGRES_PASSWORD: str = "django"
     POSTGRES_HOST: str = "db"
     POSTGRES_PORT: int = 5432
-    TRUSTED_ORIGINS: str = "http://localhost"
 
 
 class AwsSettings(BaseSettings):

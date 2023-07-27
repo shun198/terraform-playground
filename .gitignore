@@ -33,3 +33,4 @@ terraform-playground-key-pair.pem
 docs
 .env
 .pytest_cache
+__pycache__

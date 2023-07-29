@@ -63,9 +63,9 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
 # }
 
 # ECSのセキュリテーグループ
-resource "aws_security_group" "ecs_service" {
+resource "aws_security_group" "ecs_sg" {
   description = "Access for the ECS Service"
-  name        = "${local.prefix}-ecs-service"
+  name        = "${local.prefix}-ecs-sg"
   vpc_id      = aws_vpc.main.id
 
   # ECSからPublicな通信へのアウトバウンドアクセスを許可
@@ -96,6 +96,9 @@ resource "aws_security_group" "ecs_service" {
     # security_groups = [
     #   aws_security_group.lb.id
     # ]
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
   }
 
   tags = merge(
@@ -118,7 +121,7 @@ resource "aws_security_group" "ecs_service" {
 #       aws_subnet.public_a.id,
 #       aws_subnet.public_c.id,
 #     ]
-#     security_groups  = [aws_security_group.ecs_service.id]
+#     security_groups  = [aws_security_group.ecs_sg.id]
 #     assign_public_ip = true
 #   }
 

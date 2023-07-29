@@ -28,7 +28,7 @@ resource "aws_security_group" "rds" {
       # 踏み台サーバからRDSへのアクセスを許可する
       aws_security_group.bastion.id,
       # ECSからRDSへのアクセスを許可する
-      aws_security_group.ecs_service.id,
+      aws_security_group.ecs_sg.id,
     ]
 
   }

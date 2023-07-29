@@ -1,9 +1,9 @@
 # # ------------------------------
 # # DNS Configuration
 # # ------------------------------
-# data "aws_route53_zone" "zone" {
-#   name = "${var.dns_zone_name}."
-# }
+data "aws_route53_zone" "zone" {
+  name = "${var.dns_zone_name}."
+}
 
 # # サブドメインを追加
 # resource "aws_route53_record" "app" {

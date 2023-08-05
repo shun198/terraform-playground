@@ -20,28 +20,6 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
   )
 }
 
-# # ECSのコンテナの設定
-# data "template_file" "app_container_definitions" {
-#   template = file("./templates/ecs/taskdef.json")
-
-#   vars = {
-#     DJANGO_IMAGE      = var.ecr_image_app
-#     NGINX_IMAGE       = var.ecr_image_web
-#     SECRET_KEY        = var.secret_key
-#     POSTGRES_HOST     = aws_db_instance.main.address
-#     POSTGRES_NAME     = aws_db_instance.main.db_name
-#     POSTGRES_USER     = aws_db_instance.main.username
-#     POSTGRES_PASSWORD = aws_db_instance.main.password
-#     LOG_GROUP_NAME    = aws_cloudwatch_log_group.ecs_task_logs.name
-#     LOG_GROUP_REGION  = data.aws_region.current.name
-#     #  今回は検証用のためALBを作成するまでは一時的に全てのホストを許可する
-#     ALLOWED_HOSTS = "*"
-#     # allowed_hosts            = aws_route53_record.app.fqdn
-#     # s3_storage_bucket_name   = aws_s3_bucket.app_public_files.bucket
-#     # s3_storage_bucket_region = data.aws_region.current.name
-#   }
-# }
-
 # タスク定義
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition.html#example-usage
 resource "aws_ecs_task_definition" "app" {
@@ -237,29 +215,3 @@ resource "aws_ecs_service" "app" {
 
   # depends_on = [aws_lb_listener.app_https]
 }
-
-# resource "aws_ecr_repository" "app" {
-#   name = "${local.path}/app"
-
-#   image_scanning_configuration {
-#     scan_on_push = true
-#   }
-
-#   tags = merge(
-#     local.common_tags,
-#     tomap({ "Name" = "${local.prefix}-ecr-app-repository" })
-#   )
-# }
-
-# resource "aws_ecr_repository" "web" {
-#   name = "${local.path}/web"
-
-#   image_scanning_configuration {
-#     scan_on_push = true
-#   }
-
-#   tags = merge(
-#     local.common_tags,
-#     tomap({ "Name" = "${local.prefix}-ecr-app-repository" })
-#   )
-# }

@@ -87,8 +87,12 @@ resource "aws_ecs_task_definition" "app" {
             "value" : "tf-pg-dev-db"
           }
         ],
-        "mountPoints" : [],
-        "workingDirectory" : "/code",
+        "mountPoints": [
+            {
+                "sourceVolume": "tmp-data",
+                "containerPath": "/code/tmp"
+            }
+        ],
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {
@@ -114,7 +118,12 @@ resource "aws_ecs_task_definition" "app" {
           containerName = "app"
           condition     = "START"
         }]
-        "mountPoints" : [],
+        "mountPoints": [
+            {
+                "sourceVolume": "tmp-data",
+                "containerPath": "/code/tmp"
+            }
+        ],
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {

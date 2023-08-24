@@ -13,32 +13,6 @@ data "aws_ami" "amazon_linux" {
   owners = ["amazon"]
 }
 
-# # 踏み台サーバ用のIAMロールを作成
-# resource "aws_iam_role" "bastion" {
-#   name = "${local.prefix}-bastion"
-#   # sts:AssumeRole(別のIAMロールへの切り替えを許可)を割り当てる
-#   assume_role_policy = file("./templates/bastion/instance-profile-policy.json")
-
-#   tags = merge(
-#     local.common_tags,
-#     tomap({ "Name" = "${local.prefix}-bastion-role" })
-#   )
-# }
-
-# # IAMロールにポリシーを割り当てる
-# resource "aws_iam_role_policy_attachment" "bastion_attach_policy" {
-#   role       = aws_iam_role.bastion.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-# }
-
-# # EC2を作成する画面にIAMロールをアタッチする箇所がなく、
-# # IAMインスタンスプロファイルを設定する箇所が存在するため
-# aws_iam_instance_profileを使ってIAMロールをEC2インスタンスにアタッチする
-# resource "aws_iam_instance_profile" "bastion" {
-#   name = "${local.prefix}-bastion-instance-profile"
-#   role = aws_iam_role.bastion.name
-# }
-
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"

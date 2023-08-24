@@ -28,8 +28,8 @@ resource "aws_ecs_task_definition" "app" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  task_role_arn            = "arn:aws:iam::044392971793:role/ECSTaskRole"
-  execution_role_arn       = "arn:aws:iam::044392971793:role/ECSTaskExecutionRole"
+  execution_role_arn       = aws_iam_role.task_execution_role.arn
+  task_role_arn            = aws_iam_role.app_iam_role.arn
   container_definitions = jsonencode(
     [
       {
@@ -87,20 +87,19 @@ resource "aws_ecs_task_definition" "app" {
             "value" : "tf-pg-dev-db"
           }
         ],
-        "mountPoints": [
-            {
-                "sourceVolume": "tmp-data",
-                "containerPath": "/code/tmp"
-            }
+        "mountPoints" : [
+          {
+            "sourceVolume" : "tmp-data",
+            "containerPath" : "/code/tmp"
+          }
         ],
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {
-            "awslogs-group" : "/ecs/tf-pg-taskdef",
+            "awslogs-group" : "${local.prefix}-app",
             "awslogs-region" : "ap-northeast-1",
-            "awslogs-stream-prefix" : "ecs"
+            "awslogs-stream-prefix" : "app"
           },
-          "secretOptions" : []
         }
       },
       {
@@ -118,21 +117,20 @@ resource "aws_ecs_task_definition" "app" {
           containerName = "app"
           condition     = "START"
         }]
-        "mountPoints": [
-            {
-                "sourceVolume": "tmp-data",
-                "containerPath": "/code/tmp"
-            }
+        "mountPoints" : [
+          {
+            "sourceVolume" : "tmp-data",
+            "containerPath" : "/code/tmp"
+          }
         ],
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {
             "awslogs-create-group" : "true",
-            "awslogs-group" : "/ecs/tf-pg-taskdef",
+            "awslogs-group" : "${local.path}",
             "awslogs-region" : "ap-northeast-1",
             "awslogs-stream-prefix" : "ecs"
           },
-          "secretOptions" : []
         }
       }
     ]

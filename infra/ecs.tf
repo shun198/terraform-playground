@@ -10,16 +10,6 @@ resource "aws_ecs_cluster" "main" {
   )
 }
 
-# ECS内のCloudWatchの設定
-resource "aws_cloudwatch_log_group" "ecs_task_logs" {
-  name = "${local.prefix}-app"
-
-  tags = merge(
-    local.common_tags,
-    tomap({ "Name" = "${local.prefix}-ecs-cloudwatch-logs" })
-  )
-}
-
 # タスク定義
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition.html#example-usage
 resource "aws_ecs_task_definition" "app" {
@@ -38,7 +28,6 @@ resource "aws_ecs_task_definition" "app" {
         "cpu" : 0,
         "portMappings" : [
           {
-            "name" : "app-8000-tcp",
             "containerPort" : 8000,
             "hostPort" : 8000,
             "protocol" : "tcp",
@@ -68,7 +57,7 @@ resource "aws_ecs_task_definition" "app" {
           },
           {
             "name" : "ALLOWED_HOSTS",
-            "value" : "localhost 127.0.0.1 [::1]"
+            "value" : "*"
           },
           {
             "name" : "SECRET_KEY",
@@ -127,9 +116,9 @@ resource "aws_ecs_task_definition" "app" {
           "logDriver" : "awslogs",
           "options" : {
             "awslogs-create-group" : "true",
-            "awslogs-group" : "${local.path}",
+            "awslogs-group" : "${local.prefix}-web",
             "awslogs-region" : "ap-northeast-1",
-            "awslogs-stream-prefix" : "ecs"
+            "awslogs-stream-prefix" : "web"
           },
         }
       }

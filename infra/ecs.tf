@@ -19,7 +19,8 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = 256
   memory                   = 512
   execution_role_arn       = aws_iam_role.task_execution_role.arn
-  task_role_arn            = aws_iam_role.app_iam_role.arn
+  task_role_arn            = aws_iam_role.task_role.arn
+  # task_role_arn = "arn:aws:iam::044392971793:role/ECSTaskRole"
   # container_definitions = file("container_definitions/app_container_definitions.json")
   container_definitions = jsonencode(
     [
@@ -116,7 +117,6 @@ resource "aws_ecs_task_definition" "app" {
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {
-            "awslogs-create-group" : "true",
             "awslogs-group" : "/ecs/project/dev/web",
             "awslogs-region" : "ap-northeast-1",
             "awslogs-stream-prefix" : "web"

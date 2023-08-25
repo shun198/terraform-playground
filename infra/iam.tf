@@ -1,4 +1,6 @@
-# IAM 関連の設定
+# ------------------------------
+# IAM Configuration
+# ------------------------------
 # ECS
 resource "aws_iam_policy" "task_execution_role_policy" {
   name        = "${local.prefix}-task-exec-role-policy"
@@ -39,16 +41,22 @@ resource "aws_iam_role" "bastion" {
   )
 }
 
-# IAMロールにポリシーを割り当てる
-resource "aws_iam_role_policy_attachment" "bastion_attach_policy" {
-  role = aws_iam_role.bastion.name
-  # EC2に対するRead Only権限を付与
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+resource "aws_iam_policy" "bastion_access_role_policy" {
+  name        = "${local.prefix}-bastion_access_role_policy"
+  path        = "/"
+  description = "Allow bastion instance to access ec2 instances using session manager"
+  policy      = file("./templates/bastion/bastion-access-role.json")
 }
 
-# EC2を作成する画面にIAMロールをアタッチする箇所がなく、
-# IAMインスタンスプロファイルを設定する箇所が存在するため(IAMロールに相当するもの)
-# aws_iam_instance_profileを使ってIAMロールをEC2インスタンスにアタッチする
+# IAMロールにポリシーを割り当てる
+resource "aws_iam_role_policy_attachment" "bastion_attach_policy" {
+  role       = aws_iam_role.bastion.name
+  # セッションマネージャーを使って接続できるよう設定
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# IAMインスタンスプロファイルを設定(IAMロールに相当するもの)
+# インスタンスプロファイルにロールを割り当てる
 resource "aws_iam_instance_profile" "bastion" {
   name = "${local.prefix}-bastion-instance-profile"
   role = aws_iam_role.bastion.name

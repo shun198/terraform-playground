@@ -1,7 +1,7 @@
 # ECS内のCloudWatchの設定
 # Django
 resource "aws_cloudwatch_log_group" "app" {
-  name = "${local.prefix}-app"
+name              = "/ecs/project/dev/app"
 
   tags = merge(
     local.common_tags,
@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "app" {
 
 # Nginx
 resource "aws_cloudwatch_log_group" "web" {
-  name = "${local.prefix}-web"
+  name              = "/ecs/project/dev/web"
 
   tags = merge(
     local.common_tags,

@@ -20,6 +20,7 @@ resource "aws_ecs_task_definition" "app" {
   memory                   = 512
   execution_role_arn       = aws_iam_role.task_execution_role.arn
   task_role_arn            = aws_iam_role.app_iam_role.arn
+  # container_definitions = file("container_definitions/app_container_definitions.json")
   container_definitions = jsonencode(
     [
       {
@@ -85,7 +86,7 @@ resource "aws_ecs_task_definition" "app" {
         "logConfiguration" : {
           "logDriver" : "awslogs",
           "options" : {
-            "awslogs-group" : "${local.prefix}-app",
+            "awslogs-group" : "/ecs/project/dev/app",
             "awslogs-region" : "ap-northeast-1",
             "awslogs-stream-prefix" : "app"
           },
@@ -116,7 +117,7 @@ resource "aws_ecs_task_definition" "app" {
           "logDriver" : "awslogs",
           "options" : {
             "awslogs-create-group" : "true",
-            "awslogs-group" : "${local.prefix}-web",
+            "awslogs-group" : "/ecs/project/dev/web",
             "awslogs-region" : "ap-northeast-1",
             "awslogs-stream-prefix" : "web"
           },

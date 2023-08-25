@@ -86,4 +86,4 @@ graph:
 	$(RUN_TERRAFORM) graph | dot -Tsvg > graph.svg
 
 destroy:
-	$(RUN_TERRAFORM) destroy
+	$(RUN_TERRAFORM) destroy -auto-approve

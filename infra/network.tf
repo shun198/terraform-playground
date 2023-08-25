@@ -173,7 +173,7 @@ resource "aws_route" "private_a_internet_out" {
   route_table_id = aws_route_table.private_a.id
   # インターネットへのアウトバウンドアクセスを可能にするためにNATの設定を行う
   nat_gateway_id         = aws_nat_gateway.public_a.id
-  destination_cidr_block = "0.0.0.0/24"
+  destination_cidr_block = "0.0.0.0/0"
 }
 
 resource "aws_subnet" "private_c" {
@@ -205,5 +205,5 @@ resource "aws_route" "private_c_internet_out" {
   route_table_id = aws_route_table.private_c.id
   # インターネットへのアウトバウンドアクセスを可能にするためにNATの設定を行う
   nat_gateway_id         = aws_nat_gateway.public_c.id
-  destination_cidr_block = "0.0.0.0/24"
+  destination_cidr_block = "0.0.0.0/0"
 }

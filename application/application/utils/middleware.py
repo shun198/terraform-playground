@@ -1,6 +1,5 @@
 """ミドルウェア用のモジュール"""
 import datetime
-from json import JSONDecodeError, loads
 from logging import getLogger
 
 from rest_framework import status
@@ -47,9 +46,6 @@ class LoggingMiddleware:
             application_logger.warning(
                 f"{message}\n{response.content.decode()}"
             )
-        elif status.is_server_error(response.status_code):
-            error_msg = response.content.decode().split("Request")[0]
-            emergency_logger.error(f"{message}\n{error_msg}")
         else:
             application_logger.warning(message)
         return response

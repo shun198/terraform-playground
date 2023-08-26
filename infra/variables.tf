@@ -39,14 +39,12 @@ variable "ecr_image_web" {
 
 variable "dns_zone_name" {
   description = "Domain Name"
+  default     = "shun-practice.com"
 }
 
+
 variable "subdomain" {
-  description = "SubDomain Per Account"
-  type        = map(string)
-  default = {
-    prd = "api"
-    stg = "api.stg"
-    dev = "api.dev"
-  }
+  description = "Domain Name"
+  default     = "api.shun-practice.com"
 }
+

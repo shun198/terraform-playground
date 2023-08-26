@@ -1,15 +1,14 @@
 # # ------------------------------
 # # DNS Configuration
 # # ------------------------------
-data "aws_route53_zone" "zone" {
-  name = "${var.dns_zone_name}."
-}
+# data "aws_route53_zone" "zone" {
+#   name = "${var.dns_zone_name}."
+# }
 
 # # サブドメインを追加
 # resource "aws_route53_record" "app" {
 #   zone_id = data.aws_route53_zone.zone.zone_id
-#   # lookupを使ってterraform.workspaceのworkspace名をもとにvar.subdomainの値を返す
-#   name = "${lookup(var.subdomain, terraform.workspace)}.${data.aws_route53_zone.zone.name}"
+#   name    = var.subdomain
 #   # CNAME(1つのドメイン名を別のドメイン名にマッピングするレコード)を指定
 #   type = "CNAME"
 #   # 5分を指定
@@ -18,8 +17,9 @@ data "aws_route53_zone" "zone" {
 #   records = [aws_lb.app.dns_name]
 # }
 
+# # ACMを所得
 # resource "aws_acm_certificate" "cert" {
-#   domain_name       = aws_route53_record.app.fqdn
+#   domain_name = aws_route53_record.app.fqdn
 #   # 自身がDNSの所有者だと証明するためのvalidationをする
 #   validation_method = "DNS"
 

@@ -4,6 +4,7 @@
 # https://dev.classmethod.jp/articles/elb-explanation-try/
 resource "aws_lb" "app" {
   name               = "${local.prefix}-main"
+  # HTTPレベルでリクエストをハンドリングするALBを使用
   load_balancer_type = "application"
   subnets = [
     aws_subnet.public_a.id,
@@ -37,7 +38,7 @@ resource "aws_lb_target_group" "app" {
   )
 }
 
-# ロードバランサーへの入り口に当たる
+# ロードバランサーの入り口に当たる
 # 設定したプロトコルとポートを使用して接続リクエストをチェック役割を持つ
 resource "aws_lb_listener" "app" {
   load_balancer_arn = aws_lb.app.arn
@@ -46,7 +47,7 @@ resource "aws_lb_listener" "app" {
 
   # ターゲットグループへ
   default_action {
-    # ALBnリスナーからターゲットグループへforwardする
+    # ALBのリスナーからターゲットグループへforwardする
     type             = "forward"
     target_group_arn = aws_lb_target_group.app.arn
   }
@@ -89,12 +90,12 @@ resource "aws_security_group" "lb" {
   vpc_id      = aws_vpc.main.id
 
   # Publicな通信からロードバランザーへインバウンドで入る
-  #   ingress = {
-  #     protocol    = "tcp"
-  #     from_port   = 80
-  #     to_port     = 80
-  #     cidr_blocks = ["0.0.0.0/0"]
-  #   }
+    ingress = {
+      protocol    = "tcp"
+      from_port   = 80
+      to_port     = 80
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   # ACMの設定後追記
   #   ingress = {
   #     protocol    = "tcp"
@@ -104,12 +105,12 @@ resource "aws_security_group" "lb" {
   #   }
 
   #   # ロードバランザーからECSへアウトバウンドで出る
-  #   egress = {
-  #     protocol    = "tcp"
-  #     from_port   = 8000
-  #     to_port     = 8000
-  #     cidr_blocks = ["0.0.0.0/0"]
-  #   }
+    egress = {
+      protocol    = "tcp"
+      from_port   = 8000
+      to_port     = 8000
+      cidr_blocks = ["0.0.0.0/0"]
+    }
 
   tags = merge(
     local.common_tags,

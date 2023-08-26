@@ -27,23 +27,14 @@ variable "ami_image_for_bastion" {
   default = "al2023-ami-2023.1.*-kernel-6.*-x86_64"
 }
 
-variable "bastion_key_name" {
-  default = "terraform-playground-key-pair"
-}
-
 variable "ecr_image_app" {
   description = "ECR Image URI for Django App"
-  default     = "tf-pg/django"
+  default = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/django"
 }
 
 variable "ecr_image_web" {
   description = "ECR Image URI for Nginx"
-  default     = "tf-pg/nginx"
-}
-
-variable "secret_key" {
-  description = "Secret Key for Django"
-  default     = "test"
+  default = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/nginx"
 }
 
 variable "dns_zone_name" {

@@ -1,7 +1,7 @@
 [
     {
         "name" : "app",
-        "image" : "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/django",
+        "image" : "${ecr_image_app}",
         "cpu" : 0,
         "portMappings" : [
             {
@@ -12,46 +12,46 @@
             }
         ],
         "essential" : true,
-        "entryPoint" : [
-            "/usr/local/bin/entrypoint.sh"
-        ],
-        "environment" : [
+        "secrets": [
             {
                 "name" : "POSTGRES_USER",
-                "value" : "postgres"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/POSTGRES_USER"
             },
             {
                 "name" : "DJANGO_SETTINGS_MODULE",
-                "value" : "project.settings.dev"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/DJANGO_SETTINGS_MODULE"
             },
             {
                 "name" : "TRUSTED_ORIGINS",
-                "value" : "http://localhost"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/TRUSTED_ORIGINS"
             },
             {
                 "name" : "POSTGRES_HOST",
-                "value" : "tf-pg-dev-db.c2hyqbdmazh5.ap-northeast-1.rds.amazonaws.com"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/POSTGRES_HOST"
             },
             {
                 "name" : "ALLOWED_HOSTS",
-                "value" : "*"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/ALLOWED_HOSTS"
             },
             {
                 "name" : "SECRET_KEY",
-                "value" : "secretkey"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/SECRET_KEY"
             },
             {
                 "name" : "POSTGRES_PASSWORD",
-                "value" : "postgres"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/POSTGRES_PASSWORD"
             },
             {
                 "name" : "POSTGRES_PORT",
-                "value" : "5432"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/POSTGRES_PORT"
             },
             {
                 "name" : "POSTGRES_NAME",
-                "value" : "postgres"
+                "valueFrom" : "arn:aws:ssm:ap-northeast-1:044392971793:parameter/tf-pg/dev/POSTGRES_NAME"
             }
+        ],
+        "entryPoint" : [
+            "/usr/local/bin/entrypoint.sh"
         ],
         "mountPoints" : [
         {
@@ -70,7 +70,7 @@
     },
     {
         "name" : "web",
-        "image" : "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/nginx",
+        "image" : "${ecr_image_web}",
         "essential" : true,
         "portMappings" : [
         {

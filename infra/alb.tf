@@ -3,7 +3,7 @@
 # ------------------------------
 # https://dev.classmethod.jp/articles/elb-explanation-try/
 resource "aws_lb" "app" {
-  name               = "${local.prefix}-main"
+  name = "${local.prefix}-main"
   # HTTPレベルでリクエストをハンドリングするALBを使用
   load_balancer_type = "application"
   subnets = [
@@ -90,14 +90,14 @@ resource "aws_security_group" "lb" {
   vpc_id      = aws_vpc.main.id
 
   # Publicな通信からロードバランザーへインバウンドで入る
-    ingress = {
-      protocol    = "tcp"
-      from_port   = 80
-      to_port     = 80
-      cidr_blocks = ["0.0.0.0/0"]
-    }
+  ingress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   # ACMの設定後追記
-  #   ingress = {
+  #   ingress {
   #     protocol    = "tcp"
   #     from_port   = 443
   #     to_port     = 443
@@ -105,12 +105,12 @@ resource "aws_security_group" "lb" {
   #   }
 
   #   # ロードバランザーからECSへアウトバウンドで出る
-    egress = {
-      protocol    = "tcp"
-      from_port   = 8000
-      to_port     = 8000
-      cidr_blocks = ["0.0.0.0/0"]
-    }
+  egress {
+    protocol    = "tcp"
+    from_port   = 8000
+    to_port     = 8000
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = merge(
     local.common_tags,

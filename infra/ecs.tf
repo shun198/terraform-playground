@@ -16,9 +16,9 @@ data "template_file" "app_container_definitions" {
   vars = {
     log_group_name_app = aws_cloudwatch_log_group.app.name
     log_group_name_web = aws_cloudwatch_log_group.web.name
-    ecr_image_app = var.ecr_image_app
-    ecr_image_web = var.ecr_image_web
-    
+    ecr_image_app      = var.ecr_image_app
+    ecr_image_web      = var.ecr_image_web
+
   }
 }
 
@@ -32,9 +32,9 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = 256
   memory                   = 512
   # 一旦手動でロールを付与してみる
-  execution_role_arn = "arn:aws:iam::044392971793:role/tf-pg-dev-task-exec-role"
-  task_role_arn =  "arn:aws:iam::044392971793:role/tf-pg-dev-task-role"
-  container_definitions    = data.template_file.app_container_definitions.rendered
+  execution_role_arn    = "arn:aws:iam::044392971793:role/tf-pg-dev-task-exec-role"
+  task_role_arn         = "arn:aws:iam::044392971793:role/tf-pg-dev-task-role"
+  container_definitions = data.template_file.app_container_definitions.rendered
 
   volume {
     name = "tmp-data"
@@ -88,9 +88,9 @@ resource "aws_security_group" "ecs_sg" {
     security_groups = [
       aws_security_group.lb.id
     ]
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
+    # cidr_blocks = [
+    #   "0.0.0.0/0"
+    # ]
   }
 
   tags = merge(
@@ -113,7 +113,7 @@ resource "aws_ecs_service" "app" {
       aws_subnet.private_a.id,
       aws_subnet.private_c.id,
     ]
-    security_groups  = [aws_security_group.ecs_sg.id]
+    security_groups = [aws_security_group.ecs_sg.id]
   }
 
   tags = merge(
@@ -121,11 +121,12 @@ resource "aws_ecs_service" "app" {
     tomap({ "Name" = "${local.prefix}-ecs-service" })
   )
 
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.app.arn
-  #   container_name   = "proxy"
-  #   container_port   = 8000
-  # }
+  # ECS側にターゲットグループ内で新規タスクの作成を依頼する
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app.arn
+    container_name   = "web"
+    container_port   = 80
+  }
 
   # depends_on = [aws_lb_listener.app_https]
 }

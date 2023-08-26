@@ -12,3 +12,6 @@ output "bastion_host" {
 # output "api_endpoint" {
 #   value = aws_route53_record.app.fqdn
 # }
+output "api_endpoiont" {
+  value = aws_lb.app.dns_name
+}

@@ -29,12 +29,12 @@ variable "ami_image_for_bastion" {
 
 variable "ecr_image_app" {
   description = "ECR Image URI for Django App"
-  default = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/django"
+  default     = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/django"
 }
 
 variable "ecr_image_web" {
   description = "ECR Image URI for Nginx"
-  default = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/nginx"
+  default     = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/nginx"
 }
 
 variable "dns_zone_name" {

@@ -3,17 +3,20 @@
 # ------------------------------
 # ECS
 resource "aws_iam_policy" "task_execution_role_policy" {
-  name        = "${local.prefix}-terraform-task-exec-role-policy"
+  name        = "${local.prefix}-task-exec-role-policy"
   path        = "/"
   description = "Allow retrieving images and adding to logs"
   policy      = file("./templates/ecs/task-exec-role.json")
 }
 
 resource "aws_iam_role" "task_execution_role" {
-  name               = "${local.prefix}-terraform-task-exec-role"
+  name               = "${local.prefix}-task-exec-role"
   assume_role_policy = file("./templates/ecs/assume-role-policy.json")
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-task-execution-role" })
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "task_execution_role" {
@@ -22,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "task_execution_role" {
 }
 
 resource "aws_iam_role" "task_role" {
-  name               = "${local.prefix}-terraform-task-role"
+  name               = "${local.prefix}-task-role"
   assume_role_policy = file("./templates/ecs/assume-role-policy.json")
 
   tags = local.common_tags

@@ -1,7 +1,6 @@
 # ------------------------------
 # Load Balancer Configuration
 # ------------------------------
-# https://dev.classmethod.jp/articles/elb-explanation-try/
 resource "aws_lb" "app" {
   name = "${local.prefix}-main"
   # HTTPレベルでリクエストをハンドリングするALBを使用
@@ -83,7 +82,6 @@ resource "aws_lb_listener" "app" {
 #   }
 # }
 
-
 resource "aws_security_group" "lb" {
   description = "Allow access to ALB"
   name        = "${local.prefix}-lb"
@@ -104,11 +102,11 @@ resource "aws_security_group" "lb" {
   #     cidr_blocks = ["0.0.0.0/0"]
   #   }
 
-  #   # ロードバランザーからECSへアウトバウンドで出る
+  # ロードバランザーからECS(Nginx)へアウトバウンドで出る
   egress {
     protocol    = "tcp"
-    from_port   = 8000
-    to_port     = 8000
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -116,24 +114,4 @@ resource "aws_security_group" "lb" {
     local.common_tags,
     tomap({ "Name" = "${local.prefix}-alb-sg" })
   )
-}
-
-# Publicな通信からロードバランザーへインバウンドで入る
-resource "aws_security_group_rule" "lb_sg_rule_ingress" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.bastion.id
-}
-
-# ロードバランザーからECSへアウトバウンドで出る
-resource "aws_security_group_rule" "lb_sg_rule_egress" {
-  type              = "egress"
-  from_port         = 8000
-  to_port           = 8000
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.bastion.id
 }

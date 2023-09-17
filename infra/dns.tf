@@ -1,52 +1,70 @@
-# # ------------------------------
-# # DNS Configuration
-# # ------------------------------
-# data "aws_route53_zone" "zone" {
-#   name = "${var.dns_zone_name}."
-# }
+# ------------------------------
+# DNS Configuration
+# ------------------------------
+# Route53本体の設定
+resource "aws_route53_zone" "zone" {
+  name = var.domain
 
-# # サブドメインを追加
-# resource "aws_route53_record" "app" {
-#   zone_id = data.aws_route53_zone.zone.zone_id
-#   name    = var.subdomain
-#   # CNAME(1つのドメイン名を別のドメイン名にマッピングするレコード)を指定
-#   type = "CNAME"
-#   # 5分を指定
-#   ttl = "300"
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-route-53-zone" })
+  )
+}
 
-#   records = [aws_lb.app.dns_name]
-# }
+# サブドメインを追加
+resource "aws_route53_record" "app" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = var.subdomain
+  type = "A"
+  alias {
+    name                   = aws_lb.app.dns_name
+    zone_id                = aws_lb.app.zone_id
+    evaluate_target_health = true
+  }
 
-# # ACMを所得
-# resource "aws_acm_certificate" "cert" {
-#   domain_name = aws_route53_record.app.fqdn
-#   # 自身がDNSの所有者だと証明するためのvalidationをする
-#   validation_method = "DNS"
+  # records = [aws_lb.app.dns_name]
+}
 
-#   tags = merge(
-#     local.common_tags,
-#     tomap({ "Name" = "${local.prefix}-acm-cert" })
-#   )
+# ACMを作成
+resource "aws_acm_certificate" "cert" {
+  domain_name = var.domain
+  # 自身がDNSの所有者だと証明するためのvalidationをする
+  validation_method = "DNS"
 
-#   # 今回は検証用のためcreate_before_destroy = trueを指定
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+  tags = merge(
+    local.common_tags,
+    tomap({ "Name" = "${local.prefix}-acm-cert" })
+  )
 
-# # DNSのバリデーション
-# resource "aws_route53_record" "cert_validation" {
-#   name    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
-#   type    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
-#   zone_id = data.aws_route53_zone.zone.zone_id
-#   records = [
-#     aws_acm_certificate.cert.domain_validation_options.0.resource_record_value
-#   ]
-#   ttl = "60"
-# }
+  # 今回は検証用のためcreate_before_destroy = trueを指定
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  depends_on = [
+    aws_route53_zone.zone
+  ]
+}
+
+# DNSのバリデーション
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  name    = each.value.name
+  records = [each.value.record]
+  ttl     = 60
+  type    = each.value.type
+  zone_id = aws_route53_zone.zone.zone_id
+}
 
 
-# resource "aws_acm_certificate_validation" "cert" {
-#   certificate_arn         = aws_acm_certificate.cert.arn
-#   validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
-# }
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}

@@ -32,8 +32,8 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = 256
   memory                   = 512
   # 一旦手動でロールを付与してみる
-  execution_role_arn    = "arn:aws:iam::044392971793:role/tf-pg-dev-task-exec-role"
-  task_role_arn         = "arn:aws:iam::044392971793:role/tf-pg-dev-task-role"
+  execution_role_arn = "arn:aws:iam::044392971793:role/tf-pg-dev-task-exec-role"
+  task_role_arn      = "arn:aws:iam::044392971793:role/tf-pg-dev-task-role"
   # execution_role_arn    = aws_iam_role.task_execution_role.arn
   # task_role_arn         = aws_iam_role.task_role.arn
   container_definitions = data.template_file.app_container_definitions.rendered
@@ -131,5 +131,6 @@ resource "aws_ecs_service" "app" {
     container_port   = 80
   }
 
-  # depends_on = [aws_lb_listener.app_https]
+  # HTTPSリスナーが作成されてからECSを作成するようにする
+  depends_on = [aws_lb_listener.app_https]
 }

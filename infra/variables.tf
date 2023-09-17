@@ -37,7 +37,7 @@ variable "ecr_image_web" {
   default     = "044392971793.dkr.ecr.ap-northeast-1.amazonaws.com/tf-pg/nginx"
 }
 
-variable "dns_zone_name" {
+variable "domain" {
   description = "Domain Name"
   default     = "shun-practice.com"
 }
@@ -47,4 +47,3 @@ variable "subdomain" {
   description = "Domain Name"
   default     = "api.shun-practice.com"
 }
-

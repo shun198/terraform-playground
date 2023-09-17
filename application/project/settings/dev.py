@@ -13,8 +13,14 @@ ROOT_URLCONF = "project.urls.base"
 INSTALLED_APPS += [
     "django_ses",
     "storages",
+    "drf_spectacular",
 ]
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "プロジェクト名",
+    "DESCRIPTION": "詳細",
+    "VERSION": "1.0.0",
+}
 
 # SESの設定
 EMAIL_BACKEND = "django_ses.SESBackend"

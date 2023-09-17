@@ -91,9 +91,6 @@ resource "aws_security_group" "ecs_sg" {
     security_groups = [
       aws_security_group.lb.id
     ]
-    # cidr_blocks = [
-    #   "0.0.0.0/0"
-    # ]
   }
 
   tags = merge(

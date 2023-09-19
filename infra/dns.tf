@@ -2,8 +2,9 @@
 # DNS Configuration
 # ------------------------------
 # Route53本体の設定
-resource "aws_route53_zone" "zone" {
-  name = var.domain
+data "aws_route53_zone" "zone" {
+  # name = "${var.domain}."
+  zone_id = "Z01363632DBYWMKH0PRLL"
 
   tags = merge(
     local.common_tags,
@@ -13,9 +14,9 @@ resource "aws_route53_zone" "zone" {
 
 # サブドメインを追加
 resource "aws_route53_record" "app" {
-  zone_id = aws_route53_zone.zone.zone_id
+  zone_id = data.aws_route53_zone.zone.zone_id
   name    = var.subdomain
-  type = "A"
+  type    = "A"
   alias {
     name                   = aws_lb.app.dns_name
     zone_id                = aws_lb.app.zone_id
@@ -42,7 +43,7 @@ resource "aws_acm_certificate" "cert" {
   }
 
   depends_on = [
-    aws_route53_zone.zone
+    data.aws_route53_zone.zone
   ]
 }
 
@@ -60,11 +61,11 @@ resource "aws_route53_record" "cert_validation" {
   records = [each.value.record]
   ttl     = 60
   type    = each.value.type
-  zone_id = aws_route53_zone.zone.zone_id
+  zone_id = data.aws_route53_zone.zone.zone_id
 }
 
 
 resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn = aws_acm_certificate.cert.arn
+  certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }

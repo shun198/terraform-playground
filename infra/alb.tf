@@ -45,24 +45,24 @@ resource "aws_lb_listener" "app" {
   protocol          = "HTTP"
 
   # ターゲットグループへ
-  # default_action {
-  #   # ALBのリスナーからターゲットグループへforwardする
-  #   type             = "forward"
-  #   target_group_arn = aws_lb_target_group.app.arn
-  # }
+  default_action {
+    # ALBのリスナーからターゲットグループへforwardする
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
+  }
 
   # ターゲットグループへ
   # HTTPで通信した場合はHTTPSへリダイレクトする
-  default_action {
-    type             = "redirect"
-    target_group_arn = aws_lb_target_group.app.arn
+  # default_action {
+  #   type             = "redirect"
+  #   target_group_arn = aws_lb_target_group.app.arn
 
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
+  #   redirect {
+  #     port        = "443"
+  #     protocol    = "HTTPS"
+  #     status_code = "HTTP_301"
+  #   }
+  # }
 
 
   tags = merge(
